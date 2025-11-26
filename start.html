@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanSignal - Convert Missed Calls Into Booked Jobs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            background: #fafbfc;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 5, 85, 0.06);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .header-content {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            background: #ffffff;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 5, 85, 0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-section img {
+            max-width: 100%;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000555;
+            display: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 0;
+            align-items: center;
+        }
+
+        nav a {
+            color: #52596e;
+            text-decoration: none;
+            padding: 8px 20px;
+            font-size: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            border-radius: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        nav a:hover {
+            color: #000555;
+            background: rgba(0, 5, 85, 0.04);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 10px 0;
+            }
+
+            .header-content {
+                padding: 0 15px;
+            }
+
+            nav {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 3px;
+            }
+
+            nav a {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafb 100%);
+            padding: 120px 40px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(40, 167, 69, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            font-size: 21px;
+            color: #52596e;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, #28a745 0%, #20c458 100%);
+            color: white;
+            padding: 20px 48px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 16px rgba(40, 167, 69, 0.25);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(40, 167, 69, 0.35);
+        }
+
+        .cta-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .hero-subtext {
+            font-size: 15px;
+            color: #8892a6;
+            margin-top: 16px;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 15px 35px;
+            }
+
+            .hero-content {
+                padding: 0 5px;
+            }
+
+            .hero h1 {
+                font-size: 26px;
+                letter-spacing: -0.5px;
+                margin-bottom: 12px;
+                line-height: 1.2;
+            }
+
+            .hero p {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            .cta-primary {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .hero-subtext {
+                font-size: 12px;
+                margin-top: 12px;
+            }
+        }
+
+        /* Video Section */
+        .video-section {
+            padding: 80px 0;
+            background: #ffffff;
+        }
+
+        .video-container {
+            max-width: 100%;
+            margin: 0;
+            text-align: center;
+            width: 100%;
+            padding: 0 80px;
+        }
+
+        .video-container h2 {
+            font-size: 40px;
+            margin-bottom: 48px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        @media (max-width: 768px) {
+            .video-section {
+                padding: 30px 15px;
+            }
+
+            .video-container {
+                padding: 0 0;
+            }
+
+            .video-container h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 100px 0;
+            background: #fafbfc;
+        }
+
+        .how-it-works-content {
+            max-width: 100%;
+            margin: 0;
+            width: 100%;
+            padding: 0 80px;
+        }
+
+        .how-it-works h2 {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 72px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .how-it-works-content {
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #28a745 0%, #20c458 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 20px rgba(40, 167, 69, 0.25);
+        }
+
+        .step h3 {
+            font-size: 17px;
+            margin: 0 auto 10px;
+            color: #000555;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: #52596e;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .how-it-works {
+                padding: 30px 15px;
+            }
+
+            .how-it-works-content {
+                padding: 0 0;
+            }
+
+            .how-it-works h2 {
+                font-size: 20px;
+                margin-bottom: 24px;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                margin-bottom: 12px;
+                border-radius: 12px;
+            }
+
+            .step h3 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .step p {
+                font-size: 12px;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: #ffffff;
+        }
+
+        .features-content {
+            max-width: 100%;
+            margin: 0;
+            width: 100%;
+            padding: 0 80px;
+        }
+
+        .features h2 {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 64px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-items: center;
+        }
+
+        .feature {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .feature:nth-child(4),
+        .feature:nth-child(5) {
+            grid-column: auto;
+        }
+
+        .feature:hover {
+            box-shadow: 0 16px 48px rgba(40, 167, 69, 0.15);
+            transform: translateY(-8px);
+            border-color: rgba(40, 167, 69, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+        }
+
+        .feature h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #000555;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .feature p {
+            font-size: 15px;
+            color: #52596e;
+            line-height: 1.7;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                padding: 30px 15px;
+            }
+
+            .features-content {
+                padding: 0 0;
+            }
+
+            .features h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .features-grid {
+                gap: 12px;
+            }
+
+            .feature {
+                padding: 18px;
+                border-radius: 12px;
+            }
+
+            .feature h3 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .feature p {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 100px 40px;
+            background: #ffffff;
+        }
+
+        .faq-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        .faq h2 {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 64px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .faq-item {
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 5, 85, 0.06);
+        }
+
+        .faq-item:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            letter-spacing: -0.2px;
+        }
+
+        .faq-icon {
+            font-size: 24px;
+            color: #28a745;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #52596e;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-top: 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 250px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .faq {
+                padding: 30px 15px;
+            }
+
+            .faq-content {
+                padding: 0 0;
+            }
+
+            .faq h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .faq-item {
+                padding: 16px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+            }
+
+            .faq-question {
+                font-size: 13px;
+            }
+
+            .faq-answer {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .faq-icon {
+                font-size: 18px;
+                margin-left: 10px;
+            }
+
+            .faq-item.active .faq-answer {
+                margin-top: 12px;
+            }
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 100px 0;
+            background: #fafbfc;
+        }
+
+        .pricing-content {
+            max-width: 100%;
+            margin: 0;
+            width: 100%;
+            padding: 0 80px;
+        }
+
+        .pricing h2 {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 64px;
+            color: #000555;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 56px 48px;
+            text-align: center;
+            border: 2px solid rgba(0, 5, 85, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            flex: 0 0 450px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(40, 167, 69, 0.3);
+            box-shadow: 0 20px 60px rgba(40, 167, 69, 0.2);
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.featured {
+            border-color: rgba(40, 167, 69, 0.3);
+            box-shadow: 0 16px 48px rgba(40, 167, 69, 0.18);
+            transform: none;
+        }
+
+        .badge {
+            background: #28a745;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pricing-card h3 {
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 16px;
+            color: #52596e;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .pricing-card .price {
+            font-size: 56px;
+            color: #000555;
+            font-weight: 800;
+            margin: 24px 0;
+            letter-spacing: -2px;
+        }
+
+        .pricing-card .price span {
+            font-size: 20px;
+            color: #8892a6;
+            font-weight: 500;
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin: 36px 0;
+            font-size: 15px;
+            color: #52596e;
+        }
+
+        .pricing-features li {
+            list-style: none;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0, 5, 85, 0.06);
+            display: flex;
+            align-items: center;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: 700;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .pricing-card .cta-primary {
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .pricing {
+                padding: 30px 15px;
+            }
+
+            .pricing-content {
+                padding: 0 0;
+            }
+
+            .pricing h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .pricing-cards {
+                flex-direction: column;
+                max-width: 100%;
+            }
+
+            .pricing-card {
+                flex: 1 1 auto;
+                padding: 30px 24px;
+                border-radius: 16px;
+            }
+
+            .pricing-card h3 {
+                font-size: 16px;
+            }
+
+            .pricing-card .price {
+                font-size: 36px;
+                margin: 16px 0;
+            }
+
+            .pricing-card .price span {
+                font-size: 16px;
+            }
+
+            .pricing-features {
+                margin: 24px 0;
+            }
+
+            .pricing-features li {
+                font-size: 12px;
+                padding: 10px 0;
+            }
+
+            .pricing-features li:before {
+                font-size: 16px;
+                margin-right: 8px;
+            }
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 40px;
+            background: linear-gradient(135deg, #000555 0%, #001844 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(40, 167, 69, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-section-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 0 40px;
+        }
+
+        .cta-section h2 {
+            font-size: 44px;
+            margin-bottom: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .cta-section p {
+            font-size: 19px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .cta-secondary {
+            background: white;
+            color: #000555;
+            padding: 20px 48px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .cta-section {
+                padding: 30px 15px;
+            }
+
+            .cta-section-content {
+                padding: 0 0;
+            }
+
+            .cta-section h2 {
+                font-size: 20px;
+                margin-bottom: 12px;
+            }
+
+            .cta-section p {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .cta-secondary {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            color: #8892a6;
+            padding: 32px 20px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-content a,
+        .footer-content span {
+            color: #8892a6;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-content a:hover {
+            color: #28a745;
+        }
+
+        .footer-content span {
+            color: #52596e;
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 20px 15px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .footer-content a,
+            .footer-content span {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo Section -->
+    <div class="logo-section">
+        <img src="logo.png" alt="CleanSignal Logo" style="height: 60px; width: auto;">
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">CleanSignal</div>
+            <nav>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Plans</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Convert Missed Calls Into Booked Jobs</h1>
+            <p>Automate your follow-up and never lose a customer to silence again. 40% of cleaning calls go unanswered. CleanSignal ensures yours don't.</p>
+            <a href="https://buy.stripe.com/00w28s1dnefj7Nc6726Na0j" class="cta-primary" target="_blank">Get Started — $39.99/month</a>
+            <p class="hero-subtext">Set up in under 1 hour.</p>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="video-container">
+            <h2>See How It Works</h2>
+            <iframe src="https://drive.google.com/file/d/11_vtfWbR2CBq6sbOkXc8QOnLj94m2awF/preview" width="100%" style="aspect-ratio: 16/9; border: none; border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);" allow="autoplay"></iframe>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="how-it-works-content">
+            <h2>Get Live in 4 Simple Steps</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Submit Payment</h3>
+                    <p>Secure your spot with our $39.99/month plan.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Complete Intake Form</h3>
+                    <p>Fill out a quick form with your business details.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>We Build It</h3>
+                    <p>We set up workflows and configure your number.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>You're Live</h3>
+                    <p>SMS verified and capturing missed calls instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-content">
+            <h2>What You Get</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <h3>📱 Instant SMS Alerts</h3>
+                    <p>Customers get an automatic text when you miss their call—so they never go unanswered.</p>
+                </div>
+                <div class="feature">
+                    <h3>📅 Auto-Book Appointments</h3>
+                    <p>Clients reply to book directly into your calendar. No back-and-forth needed.</p>
+                </div>
+                <div class="feature">
+                    <h3>⭐ Automatic Review Requests</h3>
+                    <p>Built-in workflows ask for 5-star reviews after jobs complete. Boost your Google ranking automatically.</p>
+                </div>
+                <div class="feature">
+                    <h3>🔐 Compliance Built-In</h3>
+                    <p>STOP/HELP flows comply with TCPA regulations. Run legally from day one.</p>
+                </div>
+                <div class="feature">
+                    <h3>💬 Expert Support</h3>
+                    <p>Email support included with your plan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="pricing-content">
+            <h2>Simple, Transparent Pricing</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card featured">
+                    <h3>Complete Plan</h3>
+                    <div class="price">$39.99<span>/month</span></div>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Everything you need to start converting missed calls</p>
+                    <ul class="pricing-features">
+                        <li>Missed call SMS alerts</li>
+                        <li>Auto-booking calendar integration</li>
+                        <li>Automatic review requests</li>
+                        <li>TCPA compliance built-in</li>
+                        <li>Email support</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/00w28s1dnefj7Nc6726Na0j" class="cta-primary" target="_blank">Get Started Today</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="faq-content">
+            <h2>Common Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do I need to answer my phone differently?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    No. CleanSignal captures missed calls automatically. Keep doing what you do—we'll handle the follow-up for you.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is there an app, or does it work on my phone?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    CleanSignal is cloud-based and mobile-friendly. Your team accesses it from any browser on any device. No app download needed.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can I cancel anytime?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    Yes. Month-to-month billing, no long-term contracts. Cancel anytime with no penalty.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How long does setup take?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    Under 1 hour. You fill out a quick intake form, we build and configure everything, and you're live within 24 hours.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What if customers don't reply to the text?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    You still get the alert and their contact info. You can follow up manually if needed. The system gives you a second chance they deserve.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Is my customer data safe?</span>
+                    <span class="faq-icon">⌄</span>
+                </div>
+                <div class="faq-answer">
+                    Yes. We comply with TCPA regulations and use enterprise-grade security. Your data is encrypted and never sold.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="cta-section">
+        <div class="cta-section-content">
+            <h2>Stop Losing Money to Missed Calls</h2>
+            <p>Join cleaning companies nationwide who are booking 15–20% more jobs with CleanSignal.</p>
+            <a href="https://buy.stripe.com/00w28s1dnefj7Nc6726Na0j" class="cta-secondary" target="_blank">Get Started Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <a href="mailto:support@cleansignal.org">support@cleansignal.org</a>
+            <span>|</span>
+            <a href="https://cleansignal.org/terms-conditions" target="_blank">Terms & Conditions</a>
+            <span>|</span>
+            <a href="https://cleansignal.org/privacy" target="_blank">Privacy Policy</a>
+        </div>
+    </footer>
+
+    <!-- FAQ Toggle Script -->
+    <script>
+        // FAQ Toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('.faq-question').addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+
+        // Open first FAQ item by default
+        document.querySelector('.faq-item').classList.add('active');
+    </script>
+</body>
+</html>
